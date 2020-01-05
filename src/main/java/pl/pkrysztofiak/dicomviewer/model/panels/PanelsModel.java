@@ -11,6 +11,10 @@ public class PanelsModel {
     private final ObservableList<PanelModel> unmodifiablePanles = FXCollections.unmodifiableObservableList(panels);
     private final Observable<PanelModel> panelAddedObservable = JavaFxObservable.additionsOf(panels);
 
+    public PanelsModel() {
+        panelAddedObservable.subscribe(this::onPanelAdded);
+    }
+    
     public void add(PanelModel panelModel) {
         panels.add(panelModel);
     }
@@ -21,5 +25,9 @@ public class PanelsModel {
     
     public Observable<PanelModel> panelAddedObservable() {
         return panelAddedObservable;
+    }
+    
+    private void onPanelAdded(PanelModel panelModel) {
+        panelModel.setParent(this);
     }
 }

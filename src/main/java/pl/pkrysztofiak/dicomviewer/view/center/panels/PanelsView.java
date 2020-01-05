@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.layout.AnchorPane;
 import pl.pkrysztofiak.dicomviewer.model.panels.PanelModel;
 import pl.pkrysztofiak.dicomviewer.model.panels.PanelsModel;
+import pl.pkrysztofiak.dicomviewer.view.center.panels.panel.PanelView;
 
 public class PanelsView extends AnchorPane {
 
@@ -26,15 +27,31 @@ public class PanelsView extends AnchorPane {
         PanelView panelView = new PanelView(panelModel);
         panelViews.add(panelView);
 
-        AnchorPane.setLeftAnchor(panelView, panelModel.getMinX());
-        AnchorPane.setTopAnchor(panelView, panelModel.getMinY());
-        
-        widthObservable.subscribe(width -> {
-            AnchorPane.setRightAnchor(panelView, width - (width * panelModel.getMaxX()));
+        Observable.combineLatest(panelModel.minXObservable, widthObservable, (minX, width) -> width * minX).subscribe(leftAnchorValue -> {
+            AnchorPane.setLeftAnchor(panelView, leftAnchorValue);
         });
         
-        heightObservable.subscribe(height -> {
-            AnchorPane.setBottomAnchor(panelView, height - (height * panelModel.getMaxY()));
+        Observable.combineLatest(panelModel.minYObservable, heightObservable, (minY, height) -> height * minY).subscribe(topAnchorValue -> {
+            AnchorPane.setTopAnchor(panelView, topAnchorValue);
         });
+        
+//        AnchorPane.setLeftAnchor(panelView, panelModel.getMinX());
+//        AnchorPane.setTopAnchor(panelView, panelModel.getMinY());
+
+        Observable.combineLatest(panelModel.maxXObservable, widthObservable, (maxX, width) -> width - (width * panelModel.getMaxX())).subscribe(rightAnchorValue -> {
+            AnchorPane.setRightAnchor(panelView, rightAnchorValue);
+        });
+        
+//        widthObservable.subscribe(width -> {
+//            AnchorPane.setRightAnchor(panelView, width - (width * panelModel.getMaxX()));
+//        });
+
+        Observable.combineLatest(panelModel.maxYObservable, heightObservable, (maxY, height) -> height - (height * panelModel.getMaxY())).subscribe(bottomAnchorValue -> {
+            AnchorPane.setBottomAnchor(panelView, bottomAnchorValue);
+        });
+        
+//        heightObservable.subscribe(height -> {
+//            AnchorPane.setBottomAnchor(panelView, height - (height * panelModel.getMaxY()));
+//        });
     }
 }
