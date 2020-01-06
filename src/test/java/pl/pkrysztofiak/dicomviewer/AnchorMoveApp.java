@@ -32,7 +32,6 @@ public class AnchorMoveApp extends Application {
     }
     
     class Panel extends StackPane {
-
         
         private double pressedX;
         private double rightAnchor;

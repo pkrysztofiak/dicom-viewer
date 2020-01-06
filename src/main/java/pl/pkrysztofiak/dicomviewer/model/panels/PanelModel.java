@@ -6,6 +6,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 
 public abstract class PanelModel {
 
@@ -22,9 +23,24 @@ public abstract class PanelModel {
     public final Observable<Double> maxYObservable = JavaFxObservable.valuesOf(maxYProperty).map(Number::doubleValue);
 
     private final ObjectProperty<PanelsModel> parentProperty = new SimpleObjectProperty<>();
+
+    private final ObjectProperty<Point2D> pressedPointProperty = new SimpleObjectProperty<>();
+    private final Observable<Point2D> pressedPointObservable = JavaFxObservable.valuesOf(pressedPointProperty);
+    private final ObjectProperty<Point2D> draggedPointProperty = new SimpleObjectProperty<>();
+    private final Observable<Point2D> draggedPoinObservable = JavaFxObservable.valuesOf(draggedPointProperty);
+    
+    private double width;
+    private double startMaxX;
     
     public PanelModel() {
-        
+        pressedPointObservable.switchMap(pressed -> draggedPoinObservable.map(dragged -> dragged.getX() - pressed.getX())).subscribe(deltaX -> {
+            double w = deltaX / width;
+            System.out.println("w=" + w);
+            
+            double newMaxX = startMaxX + (startMaxX - minXProperty.get()) * w;
+            System.out.println("newMax=" + newMaxX);
+            maxXProperty.set(newMaxX);
+        });
     }
     
     public double getMinX() {
@@ -99,6 +115,19 @@ public abstract class PanelModel {
         maxYProperty.set(y);
         
         parentProperty.get().add(newPanelModel);
+    }
+    
+    public void setWidth(double widht) {
+        this.width = widht;
+    }
+    
+    public void setPressedPoint(Point2D point) {
+        startMaxX = maxXProperty.get();
+        pressedPointProperty.set(point);
+    }
+    
+    public void setDraggedPoint(Point2D point) {
+        draggedPointProperty.set(point);
     }
     
     public void setParent(PanelsModel panelsModel) {

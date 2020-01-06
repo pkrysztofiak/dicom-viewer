@@ -14,7 +14,33 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
 public class PanelViewFxml extends GridPane implements Initializable {
-
+    
+    @FXML
+    protected StackPane topLeftBorderPane;
+    
+    @FXML
+    protected StackPane topBorderPane;
+    
+    @FXML
+    protected StackPane topRightBorderPane;
+    
+    @FXML
+    protected StackPane rightBorderPane;
+    protected Observable<MouseEvent> rightBorderPaneMousePressedObservable;
+    protected Observable<MouseEvent> rightBorderPaneMouseDraggedObservable;
+    
+    @FXML
+    protected StackPane bottomRightBorderPane;
+    
+    @FXML
+    protected StackPane bottomBorderPane;
+    
+    @FXML
+    protected StackPane bottomLeftBorderPane;
+    
+    @FXML
+    protected StackPane leftBorderPane;
+    
     @FXML
     protected StackPane topPane;
     protected Observable<MouseEvent> topPaneClickedObservable;
@@ -48,6 +74,9 @@ public class PanelViewFxml extends GridPane implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("PanelViewFxml.initialize()");
+        rightBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_PRESSED);
+        rightBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_DRAGGED);
+        
         topPaneClickedObservable = JavaFxObservable.eventsOf(topPane, MouseEvent.MOUSE_CLICKED);
         rightPaneClickedObservable = JavaFxObservable.eventsOf(rightPane, MouseEvent.MOUSE_CLICKED);
         bottomPaneClickedObservable = JavaFxObservable.eventsOf(bottomPane, MouseEvent.MOUSE_CLICKED);
@@ -63,7 +92,7 @@ public class PanelViewFxml extends GridPane implements Initializable {
     private void onHover(boolean hover, StackPane stackPane) {
         if (hover) {
             stackPane.toFront();
-            stackPane.setStyle("-fx-background-color: grey;");
+            stackPane.setStyle("-fx-background-color: blue;");
         } else {
             stackPane.setStyle("");
         }
