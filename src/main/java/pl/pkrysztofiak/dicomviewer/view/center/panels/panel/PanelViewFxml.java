@@ -25,8 +25,12 @@ public class PanelViewFxml extends GridPane implements Initializable {
     
     @FXML
     protected StackPane bottomPane;
+    protected Observable<MouseEvent> bottomPaneClickedObservable;
+    
     @FXML
     protected StackPane leftPane;
+    protected Observable<MouseEvent> leftPaneClickedObservable;
+    
     @FXML
     protected StackPane centerPane;
     
@@ -46,6 +50,8 @@ public class PanelViewFxml extends GridPane implements Initializable {
         System.out.println("PanelViewFxml.initialize()");
         topPaneClickedObservable = JavaFxObservable.eventsOf(topPane, MouseEvent.MOUSE_CLICKED);
         rightPaneClickedObservable = JavaFxObservable.eventsOf(rightPane, MouseEvent.MOUSE_CLICKED);
+        bottomPaneClickedObservable = JavaFxObservable.eventsOf(bottomPane, MouseEvent.MOUSE_CLICKED);
+        leftPaneClickedObservable = JavaFxObservable.eventsOf(leftPane, MouseEvent.MOUSE_CLICKED);
         
         JavaFxObservable.valuesOf(topPane.hoverProperty()).subscribe(hover -> onHover(hover, topPane));
         JavaFxObservable.valuesOf(rightPane.hoverProperty()).subscribe(hover -> onHover(hover, rightPane));

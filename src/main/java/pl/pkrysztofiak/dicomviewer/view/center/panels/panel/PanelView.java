@@ -21,10 +21,25 @@ public class PanelView extends PanelViewFxml {
         System.out.println("PanelView.initialize()");
         super.initialize(location, resources);
 
+        topPaneClickedObservable.subscribe(this::onTopPaneClicked);
         rightPaneClickedObservable.subscribe(this::onRightPaneClicked);
+        bottomPaneClickedObservable.subscribe(this::onBottomPaneClicked);
+        leftPaneClickedObservable.subscribe(this::onLeftPaneClicked);
     }
     
+    private void onTopPaneClicked(MouseEvent event) {
+        panelModel.addTop(new ImagePanel());
+    }
+     
     private void onRightPaneClicked(MouseEvent event) {
-        panelModel.addToRight(new ImagePanel());
+        panelModel.addRight(new ImagePanel());
+    }
+    
+    private void onBottomPaneClicked(MouseEvent event) {
+        panelModel.addBottom(new ImagePanel());
+    }
+    
+    private void onLeftPaneClicked(MouseEvent event) {
+        panelModel.addLeft(new ImagePanel());
     }
 }

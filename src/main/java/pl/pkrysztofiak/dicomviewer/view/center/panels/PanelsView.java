@@ -34,24 +34,13 @@ public class PanelsView extends AnchorPane {
         Observable.combineLatest(panelModel.minYObservable, heightObservable, (minY, height) -> height * minY).subscribe(topAnchorValue -> {
             AnchorPane.setTopAnchor(panelView, topAnchorValue);
         });
-        
-//        AnchorPane.setLeftAnchor(panelView, panelModel.getMinX());
-//        AnchorPane.setTopAnchor(panelView, panelModel.getMinY());
 
         Observable.combineLatest(panelModel.maxXObservable, widthObservable, (maxX, width) -> width - (width * panelModel.getMaxX())).subscribe(rightAnchorValue -> {
             AnchorPane.setRightAnchor(panelView, rightAnchorValue);
         });
-        
-//        widthObservable.subscribe(width -> {
-//            AnchorPane.setRightAnchor(panelView, width - (width * panelModel.getMaxX()));
-//        });
 
         Observable.combineLatest(panelModel.maxYObservable, heightObservable, (maxY, height) -> height - (height * panelModel.getMaxY())).subscribe(bottomAnchorValue -> {
             AnchorPane.setBottomAnchor(panelView, bottomAnchorValue);
         });
-        
-//        heightObservable.subscribe(height -> {
-//            AnchorPane.setBottomAnchor(panelView, height - (height * panelModel.getMaxY()));
-//        });
     }
 }

@@ -43,14 +43,60 @@ public abstract class PanelModel {
         return maxYProperty.get();
     }
     
-    public void addToRight(PanelModel newPanelModel) {
+    public void addLeft(PanelModel newPanelModel) {
         newPanelModel.setMinY(minYProperty.get());
         newPanelModel.setMaxY(maxYProperty.get());
+        
+        newPanelModel.setMinX(minXProperty.get());
+        
+        double halfWidth = (maxXProperty.get() - minXProperty.get()) / 2.;
+        double x = minXProperty.get() + halfWidth;
+        minXProperty.set(x);
+        newPanelModel.setMaxX(x);
+        
+        parentProperty.get().add(newPanelModel);
+    }
+    
+    public void addRight(PanelModel newPanelModel) {
+        newPanelModel.setMinY(minYProperty.get());
+        newPanelModel.setMaxY(maxYProperty.get());
+        
         newPanelModel.setMaxX(maxXProperty.get());
         
         double halfWidth = (maxXProperty.get() - minXProperty.get()) / 2.;
-        newPanelModel.setMinX(minXProperty.get() + halfWidth);
-        maxXProperty.set(minXProperty.get() + halfWidth);
+        double x = minXProperty.get() + halfWidth;
+        newPanelModel.setMinX(x);
+        maxXProperty.set(x);
+        
+        parentProperty.get().add(newPanelModel);
+    }
+    
+    public void addTop(PanelModel newPanelModel) {
+        newPanelModel.setMinX(minXProperty.get());
+        newPanelModel.setMaxX(maxXProperty.get());
+        
+        newPanelModel.setMinY(minYProperty.get());
+        
+        double halfHeight = (maxYProperty.get() - minYProperty.get()) / 2.;
+        double y = minYProperty.get() + halfHeight;
+        
+        newPanelModel.setMaxY(y);
+        minYProperty.set(y);
+        
+        parentProperty.get().add(newPanelModel);
+    }
+    
+    public void addBottom(PanelModel newPanelModel) {
+        newPanelModel.setMinX(minXProperty.get());
+        newPanelModel.setMaxX(maxXProperty.get());
+        
+        newPanelModel.setMaxY(maxYProperty.get());
+        
+        double halfHeight = (maxYProperty.get() - minYProperty.get()) / 2.;
+        double y = minYProperty.get() + halfHeight;
+        
+        newPanelModel.setMinY(y);
+        maxYProperty.set(y);
         
         parentProperty.get().add(newPanelModel);
     }
