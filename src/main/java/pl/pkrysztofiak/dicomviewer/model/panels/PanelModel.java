@@ -59,16 +59,20 @@ public abstract class PanelModel {
     
     private void onAdjacentAdded(PanelModel adjacentPanelModel) {
         if (getMaxX() == adjacentPanelModel.getMinX()) {
-            adjacentPanelModel.minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxX);
+            maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMinX);
+//            adjacentPanelModel.minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxX);
         }
         if (getMinX() == adjacentPanelModel.getMaxX()) {
-            adjacentPanelModel.maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinX);
+            minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMaxX);
+//            adjacentPanelModel.maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinX);
         }
         if (getMaxY() == adjacentPanelModel.getMinY()) {
-            adjacentPanelModel.minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxY);
+            maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMinY);
+//            adjacentPanelModel.minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxY);
         }
         if (getMinY() == adjacentPanelModel.getMaxY()) {
-            adjacentPanelModel.maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinY);
+            minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMaxY);
+//            adjacentPanelModel.maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinY);
         }
     }
     

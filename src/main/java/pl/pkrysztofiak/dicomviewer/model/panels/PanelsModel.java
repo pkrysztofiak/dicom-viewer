@@ -33,6 +33,9 @@ public class PanelsModel {
     private void onPanelAdded(PanelModel addedPanelModel) {
         addedPanelModel.setParent(this);
 
+//        System.out.println("addedPanel " + addedPanelModel);
+        panels.stream().forEach(System.out::println);
+        
         refresh(addedPanelModel);
         panels.stream().filter(panelModel -> !panelModel.equals(addedPanelModel)).forEach(this::refresh);
     }
