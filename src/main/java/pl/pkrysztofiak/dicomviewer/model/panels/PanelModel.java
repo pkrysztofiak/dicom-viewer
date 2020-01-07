@@ -6,10 +6,22 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 
 public abstract class PanelModel {
 
+    public final ObservableList<PanelModel> adjacentPanels = FXCollections.observableArrayList();
+    private final Observable<PanelModel> adjacentPanelAdded = JavaFxObservable.additionsOf(adjacentPanels);
+    private final Observable<PanelModel> adjacentPanelRemoved = JavaFxObservable.removalsOf(adjacentPanels);
+    
+    public final ObservableList<PanelModel> topAdjacementPanels = FXCollections.observableArrayList();
+    
+    public final ObservableList<PanelModel> rightAdjacementPanels = FXCollections.observableArrayList();
+    public final ObservableList<PanelModel> bottomAdjacementPanels = FXCollections.observableArrayList();
+    public final ObservableList<PanelModel> leftAdjacementPanels = FXCollections.observableArrayList();
+    
     protected final DoubleProperty minXProperty = new SimpleDoubleProperty(0.);
     public final Observable<Double> minXObservable = JavaFxObservable.valuesOf(minXProperty).map(Number::doubleValue);
     
@@ -41,6 +53,23 @@ public abstract class PanelModel {
             System.out.println("newMax=" + newMaxX);
             maxXProperty.set(newMaxX);
         });
+        
+        adjacentPanelAdded.subscribe(this::onAdjacentAdded);
+    }
+    
+    private void onAdjacentAdded(PanelModel adjacentPanelModel) {
+        if (getMaxX() == adjacentPanelModel.getMinX()) {
+            adjacentPanelModel.minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxX);
+        }
+        if (getMinX() == adjacentPanelModel.getMaxX()) {
+            adjacentPanelModel.maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinX);
+        }
+        if (getMaxY() == adjacentPanelModel.getMinY()) {
+            adjacentPanelModel.minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxY);
+        }
+        if (getMinY() == adjacentPanelModel.getMaxY()) {
+            adjacentPanelModel.maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinY);
+        }
     }
     
     public double getMinX() {
@@ -76,6 +105,7 @@ public abstract class PanelModel {
     }
     
     public void addLeft(PanelModel newPanelModel) {
+        adjacentPanels.clear();
         newPanelModel.setMinY(minYProperty.get());
         newPanelModel.setMaxY(maxYProperty.get());
         
@@ -90,6 +120,7 @@ public abstract class PanelModel {
     }
     
     public void addRight(PanelModel newPanelModel) {
+        adjacentPanels.clear();
         newPanelModel.setMinY(minYProperty.get());
         newPanelModel.setMaxY(maxYProperty.get());
         
@@ -104,6 +135,7 @@ public abstract class PanelModel {
     }
     
     public void addTop(PanelModel newPanelModel) {
+        adjacentPanels.clear();
         newPanelModel.setMinX(minXProperty.get());
         newPanelModel.setMaxX(maxXProperty.get());
         
@@ -119,6 +151,7 @@ public abstract class PanelModel {
     }
     
     public void addBottom(PanelModel newPanelModel) {
+        adjacentPanels.clear();
         newPanelModel.setMinX(minXProperty.get());
         newPanelModel.setMaxX(maxXProperty.get());
         
