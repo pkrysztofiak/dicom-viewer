@@ -27,7 +27,41 @@ public class PanelsModel {
         return panelAddedObservable;
     }
     
-    private void onPanelAdded(PanelModel panelModel) {
-        panelModel.setParent(this);
+    private void onPanelAdded(PanelModel addedPanelModel) {
+        addedPanelModel.setParent(this);
+
+        for (PanelModel panelModel : panels) {
+            if (!panelModel.equals(addedPanelModel)) {
+                
+                if (addedPanelModel.getMaxX() == panelModel.getMinX()) {
+                    if (!(addedPanelModel.getMinY() > panelModel.getMaxY()) || !(addedPanelModel.getMaxY() < panelModel.getMinY())) {
+                        //TODO dopisać takeUntil na panelModel.removedObservable();
+                        addedPanelModel.maxXObservable.subscribe(panelModel::setMinX);
+                        panelModel.minXObservable.subscribe(addedPanelModel::setMaxX);
+                    }
+                }
+                
+                if (addedPanelModel.getMaxY() == panelModel.getMinY()) {
+                    if (!(addedPanelModel.getMinX() > panelModel.getMaxX()) || !(addedPanelModel.getMaxX() < panelModel.getMinX())) {
+                        addedPanelModel.maxYObservable.subscribe(panelModel::setMinY);
+                        panelModel.minYObservable.subscribe(addedPanelModel::setMaxY);
+                    }
+                }
+
+                if (addedPanelModel.getMinX() == panelModel.getMaxX()) {
+                    if (!(addedPanelModel.getMinY() > panelModel.getMaxY()) || !(addedPanelModel.getMaxY() < panelModel.getMinY())) {
+                        addedPanelModel.minXObservable.subscribe(panelModel::setMaxX);
+                        panelModel.maxXObservable.subscribe(addedPanelModel::setMinX);
+                    }
+                }
+                
+                if (addedPanelModel.getMinY() == panelModel.getMaxY()) {
+                    if (!(addedPanelModel.getMinX() > panelModel.getMaxX()) || !(addedPanelModel.getMaxX() < panelModel.getMinX())) {
+                        addedPanelModel.minYObservable.subscribe(panelModel::setMaxY);
+                        panelModel.maxYObservable.subscribe(addedPanelModel::setMinY);
+                    }
+                }
+            }
+        }
     }
 }

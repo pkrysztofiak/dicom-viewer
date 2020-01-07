@@ -58,6 +58,22 @@ public abstract class PanelModel {
     public double getMaxY() {
         return maxYProperty.get();
     }
+
+    public void setMinX(double value) {
+        minXProperty.set(value);
+    }
+    
+    public void setMinY(double value) {
+        minYProperty.set(value);
+    }
+    
+    public void setMaxX(double value) {
+        maxXProperty.set(value);
+    }
+    
+    public void setMaxY(double value) {
+        maxYProperty.set(value);
+    }
     
     public void addLeft(PanelModel newPanelModel) {
         newPanelModel.setMinY(minYProperty.get());
@@ -132,22 +148,6 @@ public abstract class PanelModel {
     
     public void setParent(PanelsModel panelsModel) {
         parentProperty.set(panelsModel);
-    }
-    
-    public void setMinX(double value) {
-        minXProperty.set(value);
-    }
-    
-    public void setMinY(double value) {
-        minYProperty.set(value);
-    }
-    
-    public void setMaxX(double value) {
-        maxXProperty.set(value);
-    }
-    
-    public void setMaxY(double value) {
-        maxYProperty.set(value);
     }
 
     @Override
