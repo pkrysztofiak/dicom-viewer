@@ -29,17 +29,51 @@ public class PanelView extends PanelViewFxml {
         
         rightBorderPaneMousePressedObservable
         .map(MouseEvent::getSceneX).switchMap(pressedX -> 
-            Observable.combineLatest(rightBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneX), Observable.just(widthProperty().get()), Observable.just(panelModel.getMaxX()), (draggedX, width, startMaxX) -> {
-                double delta = (draggedX - pressedX) / width;
-                return startMaxX + (startMaxX - panelModel.getMinX()) * delta;
-            }))
+        Observable.combineLatest(rightBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneX), Observable.just(widthProperty().get()), Observable.just(panelModel.getMaxX()), (draggedX, width, startMaxX) -> {
+            double delta = (draggedX - pressedX) / width;
+            return startMaxX + (startMaxX - panelModel.getMinX()) * delta;
+        }))
         .subscribe(this::onRightBorderDragged);
         
+        bottomBorderPaneMousePressedObservable
+        .map(MouseEvent::getSceneY).switchMap(pressedY -> 
+            Observable.combineLatest(bottomBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneY), Observable.just(heightProperty().get()), Observable.just(panelModel.getMaxY()), (draggedY, height, startMaxY) -> {
+                double delta = (draggedY - pressedY) / height;
+                return startMaxY + (startMaxY - panelModel.getMinY()) * delta;
+            }))
+        .subscribe(this::onBottomBorderDragged);
         
+        leftBorderPaneMousePressedObservable
+        .map(MouseEvent::getSceneX).switchMap(pressedX -> 
+        Observable.combineLatest(leftBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneX), Observable.just(widthProperty().get()), Observable.just(panelModel.getMinX()), (draggedX, width, startMinX) -> {
+            double delta = (draggedX - pressedX) / width;
+            return startMinX + (panelModel.getMaxX() - startMinX) * delta;
+        }))
+        .subscribe(this::onLeftBorderDragged);
+        
+        topBorderPaneMousePressedObservable
+        .map(MouseEvent::getSceneY).switchMap(pressedY -> 
+        Observable.combineLatest(topBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneY), Observable.just(heightProperty().get()), Observable.just(panelModel.getMaxY()), (draggedY, width, startMaxY) -> {
+            double delta = (draggedY - pressedY) / width;
+            return startMaxY + (panelModel.getMaxY() - startMaxY) * delta;
+        }))
+        .subscribe(this::onTopBorderDragged);
     }
     
-    private void onRightBorderDragged(double maxX) {
-        panelModel.setMaxX(maxX);
+    private void onTopBorderDragged(double y) {
+        panelModel.setMinY(y);
+    }
+    
+    private void onBottomBorderDragged(double y) {
+        panelModel.setMaxY(y);
+    }
+    
+    private void onRightBorderDragged(double x) {
+        panelModel.setMaxX(x);
+    }
+    
+    private void onLeftBorderDragged(double x) {
+        panelModel.setMinX(x);
     }
     
     private void onTopPaneClicked(MouseEvent event) {

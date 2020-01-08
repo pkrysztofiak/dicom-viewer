@@ -20,6 +20,8 @@ public class PanelViewFxml extends GridPane implements Initializable {
     
     @FXML
     protected StackPane topBorderPane;
+    protected Observable<MouseEvent> topBorderPaneMousePressedObservable;
+    protected Observable<MouseEvent> topBorderPaneMouseDraggedObservable;
     
     @FXML
     protected StackPane topRightBorderPane;
@@ -42,6 +44,8 @@ public class PanelViewFxml extends GridPane implements Initializable {
     
     @FXML
     protected StackPane leftBorderPane;
+    protected Observable<MouseEvent> leftBorderPaneMousePressedObservable;
+    protected Observable<MouseEvent> leftBorderPaneMouseDraggedObservable;
     
     @FXML
     protected StackPane topPane;
@@ -76,10 +80,14 @@ public class PanelViewFxml extends GridPane implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("PanelViewFxml.initialize()");
+        topBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(topBorderPane, MouseEvent.MOUSE_PRESSED);
+        topBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(topBorderPane, MouseEvent.MOUSE_DRAGGED);
         rightBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_PRESSED);
         rightBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_DRAGGED);
         bottomBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(bottomBorderPane, MouseEvent.MOUSE_PRESSED);
         bottomBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(bottomBorderPane, MouseEvent.MOUSE_DRAGGED);
+        leftBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(leftBorderPane, MouseEvent.MOUSE_PRESSED);
+        leftBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(leftBorderPane, MouseEvent.MOUSE_DRAGGED);
         
         topPaneClickedObservable = JavaFxObservable.eventsOf(topPane, MouseEvent.MOUSE_CLICKED);
         rightPaneClickedObservable = JavaFxObservable.eventsOf(rightPane, MouseEvent.MOUSE_CLICKED);
