@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 
 import io.reactivex.Observable;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -59,6 +61,16 @@ public class PanelViewFxml extends GridPane implements Initializable {
     
     @FXML
     protected StackPane centerPane;
+    
+    protected final ObjectProperty<Double> pressedXProperty = new SimpleObjectProperty<>();
+    protected final Observable<Double> pressedXObservable = JavaFxObservable.valuesOf(pressedXProperty);
+    protected final ObjectProperty<Double> pressedYProperty = new SimpleObjectProperty<>();
+    protected final Observable<Double> pressedYObservable = JavaFxObservable.valuesOf(pressedYProperty);
+
+    protected final ObjectProperty<Double> draggedXProperty = new SimpleObjectProperty<>();
+    protected final Observable<Double> draggedXObservable = JavaFxObservable.valuesOf(draggedXProperty);
+    protected final ObjectProperty<Double> draggedYProperty = new SimpleObjectProperty<>();
+    protected final Observable<Double> draggedYObservable = JavaFxObservable.valuesOf(draggedYProperty);
     
     public PanelViewFxml() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/PanelView.fxml"));

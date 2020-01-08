@@ -3,6 +3,7 @@ package pl.pkrysztofiak.dicomviewer.view.center.panels.panel;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import io.reactivex.Observable;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import pl.pkrysztofiak.dicomviewer.model.panels.PanelModel;
@@ -29,6 +30,19 @@ public class PanelView extends PanelViewFxml {
         rightPaneClickedObservable.subscribe(this::onRightPaneClicked);
         bottomPaneClickedObservable.subscribe(this::onBottomPaneClicked);
         leftPaneClickedObservable.subscribe(this::onLeftPaneClicked);
+        
+        
+        pressedXObservable.switchMap(pressedX -> 
+            Observable.combineLatest(
+                    draggedXObservable, 
+                    Observable.just(getWidth()), 
+                    Observable.just(panelModel.getMaxX()), (draggedX, width, startMaxX) -> {
+                        double delta = (draggedX - pressedX) / width;
+                        return startMaxX + (startMaxX - panelModel.getMinX()) * delta;
+                    }))
+        .subscribe(maxX -> {
+            panelModel.setMaxX(maxX);
+        });
     }
     
     private void onTopPaneClicked(MouseEvent event) {
@@ -47,14 +61,24 @@ public class PanelView extends PanelViewFxml {
         panelModel.addLeft(new ImagePanel());
     }
     
+    private void onMoveMaxX(double deltaX) {
+        panelModel.setMaxX(deltaX);
+    }
+    
     private void onRightBorderPaneMousePressed(MouseEvent event) {
-        System.out.println("right border mouse pressed");
-        panelModel.setWidth(getWidth());
+        pressedXProperty.set(event.getSceneX());
+        pressedYProperty.set(event.getSceneY());
+//        pressedProperty.set(new Point2D(event.getScreenX(), event.getScreenY()));
+//        pressedX = event.getScreenX();
+//        System.out.println("right border mouse pressed");
+//        panelModel.setWidth(getWidth());
         panelModel.setPressedPoint(new Point2D(event.getScreenX(), event.getScreenY()));
     }
     
     private void onRightBorderPaneMouseDragged(MouseEvent event) {
-        System.out.println("rightBorder MouseDragged");
-        panelModel.setDraggedPoint(new Point2D(event.getScreenX(), event.getScreenY()));
+        draggedXProperty.set(event.getSceneX());
+        draggedYProperty.set(event.getSceneY());
+//        System.out.println("rightBorder MouseDragged");
+//        panelModel.setDraggedPoint(new Point2D(event.getScreenX(), event.getScreenY()));
     }
 }

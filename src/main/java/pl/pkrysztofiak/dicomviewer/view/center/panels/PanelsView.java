@@ -31,32 +31,16 @@ public class PanelsView extends AnchorPane {
             AnchorPane.setLeftAnchor(panelView, leftAnchorValue);
         });
         
-//        panelModel.minXObservable.switchMap(minX -> widthObservable.map(width -> width * minX)).subscribe(leftAnchorValue -> {
-//            AnchorPane.setLeftAnchor(panelView, leftAnchorValue);
-//        });
-        
         Observable.combineLatest(panelModel.minYObservable, heightObservable, (minY, height) -> height * minY).subscribe(topAnchorValue -> {
             AnchorPane.setTopAnchor(panelView, topAnchorValue);
         });
-        
-//        panelModel.minYObservable.switchMap(minY -> heightObservable.map(height -> height * minY)).subscribe(topAnchorValue -> {
-//            AnchorPane.setTopAnchor(panelView, topAnchorValue);
-//        });
 
         Observable.combineLatest(panelModel.maxXObservable, widthObservable, (maxX, width) -> width - (width * maxX)).subscribe(rightAnchorValue -> {
             AnchorPane.setRightAnchor(panelView, rightAnchorValue);
         });
-        
-//        panelModel.maxXObservable.switchMap(maxX -> widthObservable.map(width -> width - (width * maxX))).subscribe(rightAnchorValue -> {
-//            AnchorPane.setRightAnchor(panelView, rightAnchorValue);
-//        });
 
         Observable.combineLatest(panelModel.maxYObservable, heightObservable, (maxY, height) -> height - (height * maxY)).subscribe(bottomAnchorValue -> {
             AnchorPane.setBottomAnchor(panelView, bottomAnchorValue);
         });
-        
-//        panelModel.maxYObservable.switchMap(maxY -> heightObservable.map(height -> height - (height * maxY))).subscribe(bottomAnchorValue -> {
-//            AnchorPane.setBottomAnchor(panelView, bottomAnchorValue);
-//        });
     }
 }

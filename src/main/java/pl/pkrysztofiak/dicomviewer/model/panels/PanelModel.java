@@ -40,6 +40,9 @@ public abstract class PanelModel {
     private final Observable<Point2D> pressedPointObservable = JavaFxObservable.valuesOf(pressedPointProperty);
     private final ObjectProperty<Point2D> draggedPointProperty = new SimpleObjectProperty<>();
     private final Observable<Point2D> draggedPoinObservable = JavaFxObservable.valuesOf(draggedPointProperty);
+
+//    private final ObjectProperty<Double> draggedDeltaXProperty = new SimpleObjectProperty<>();
+//    private final Observable<Double> draggedDeltaXObservable = JavaFxObservable.valuesOf(draggedDeltaXProperty);
     
     private double width;
     private double startMaxX;
@@ -60,19 +63,15 @@ public abstract class PanelModel {
     private void onAdjacentAdded(PanelModel adjacentPanelModel) {
         if (getMaxX() == adjacentPanelModel.getMinX()) {
             maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMinX);
-//            adjacentPanelModel.minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxX);
         }
         if (getMinX() == adjacentPanelModel.getMaxX()) {
             minXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMaxX);
-//            adjacentPanelModel.maxXObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinX);
         }
         if (getMaxY() == adjacentPanelModel.getMinY()) {
             maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMinY);
-//            adjacentPanelModel.minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMaxY);
         }
         if (getMinY() == adjacentPanelModel.getMaxY()) {
             minYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(adjacentPanelModel::setMaxY);
-//            adjacentPanelModel.maxYObservable.takeUntil(adjacentPanelRemoved.filter(adjacentPanelModel::equals)).subscribe(this::setMinY);
         }
     }
     
@@ -106,6 +105,12 @@ public abstract class PanelModel {
     
     public void setMaxY(double value) {
         maxYProperty.set(value);
+    }
+    
+    public void moveMaxX(Double deltaX) {
+        System.out.println("deltaX=" + deltaX);
+        setMaxX(getMaxX() + deltaX);
+//        draggedDeltaXProperty.set(sdeltaX);
     }
     
     public void addLeft(PanelModel newPanelModel) {
