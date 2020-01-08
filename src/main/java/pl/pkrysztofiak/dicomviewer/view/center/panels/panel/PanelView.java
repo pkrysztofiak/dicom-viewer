@@ -53,9 +53,9 @@ public class PanelView extends PanelViewFxml {
         
         topBorderPaneMousePressedObservable
         .map(MouseEvent::getSceneY).switchMap(pressedY -> 
-        Observable.combineLatest(topBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneY), Observable.just(heightProperty().get()), Observable.just(panelModel.getMaxY()), (draggedY, width, startMaxY) -> {
-            double delta = (draggedY - pressedY) / width;
-            return startMaxY + (panelModel.getMaxY() - startMaxY) * delta;
+        Observable.combineLatest(topBorderPaneMouseDraggedObservable.map(MouseEvent::getSceneY), Observable.just(heightProperty().get()), Observable.just(panelModel.getMinY()), (draggedY, height, startMinY) -> {
+            double delta = (draggedY - pressedY) / height;
+            return startMinY + (panelModel.getMaxY() - startMinY) * delta;
         }))
         .subscribe(this::onTopBorderDragged);
     }
