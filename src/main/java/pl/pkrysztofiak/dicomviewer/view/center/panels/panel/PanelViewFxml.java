@@ -6,8 +6,6 @@ import java.util.ResourceBundle;
 
 import io.reactivex.Observable;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -36,6 +34,8 @@ public class PanelViewFxml extends GridPane implements Initializable {
     
     @FXML
     protected StackPane bottomBorderPane;
+    protected Observable<MouseEvent> bottomBorderPaneMousePressedObservable;
+    protected Observable<MouseEvent> bottomBorderPaneMouseDraggedObservable;
     
     @FXML
     protected StackPane bottomLeftBorderPane;
@@ -62,16 +62,6 @@ public class PanelViewFxml extends GridPane implements Initializable {
     @FXML
     protected StackPane centerPane;
     
-    protected final ObjectProperty<Double> pressedXProperty = new SimpleObjectProperty<>();
-    protected final Observable<Double> pressedXObservable = JavaFxObservable.valuesOf(pressedXProperty);
-    protected final ObjectProperty<Double> pressedYProperty = new SimpleObjectProperty<>();
-    protected final Observable<Double> pressedYObservable = JavaFxObservable.valuesOf(pressedYProperty);
-
-    protected final ObjectProperty<Double> draggedXProperty = new SimpleObjectProperty<>();
-    protected final Observable<Double> draggedXObservable = JavaFxObservable.valuesOf(draggedXProperty);
-    protected final ObjectProperty<Double> draggedYProperty = new SimpleObjectProperty<>();
-    protected final Observable<Double> draggedYObservable = JavaFxObservable.valuesOf(draggedYProperty);
-    
     public PanelViewFxml() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/PanelView.fxml"));
         try {
@@ -88,6 +78,8 @@ public class PanelViewFxml extends GridPane implements Initializable {
         System.out.println("PanelViewFxml.initialize()");
         rightBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_PRESSED);
         rightBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(rightBorderPane, MouseEvent.MOUSE_DRAGGED);
+        bottomBorderPaneMousePressedObservable = JavaFxObservable.eventsOf(bottomBorderPane, MouseEvent.MOUSE_PRESSED);
+        bottomBorderPaneMouseDraggedObservable = JavaFxObservable.eventsOf(bottomBorderPane, MouseEvent.MOUSE_DRAGGED);
         
         topPaneClickedObservable = JavaFxObservable.eventsOf(topPane, MouseEvent.MOUSE_CLICKED);
         rightPaneClickedObservable = JavaFxObservable.eventsOf(rightPane, MouseEvent.MOUSE_CLICKED);
