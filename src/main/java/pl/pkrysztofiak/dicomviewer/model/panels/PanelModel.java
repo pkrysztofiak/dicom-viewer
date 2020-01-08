@@ -35,27 +35,7 @@ public abstract class PanelModel {
 
     private final ObjectProperty<PanelsModel> parentProperty = new SimpleObjectProperty<>();
 
-//    private final ObjectProperty<Point2D> pressedPointProperty = new SimpleObjectProperty<>();
-//    private final Observable<Point2D> pressedPointObservable = JavaFxObservable.valuesOf(pressedPointProperty);
-//    private final ObjectProperty<Point2D> draggedPointProperty = new SimpleObjectProperty<>();
-//    private final Observable<Point2D> draggedPoinObservable = JavaFxObservable.valuesOf(draggedPointProperty);
-
-//    private final ObjectProperty<Double> draggedDeltaXProperty = new SimpleObjectProperty<>();
-//    private final Observable<Double> draggedDeltaXObservable = JavaFxObservable.valuesOf(draggedDeltaXProperty);
-    
-//    private double width;
-//    private double startMaxX;
-    
     public PanelModel() {
-//        pressedPointObservable.switchMap(pressed -> draggedPoinObservable.map(dragged -> dragged.getX() - pressed.getX())).subscribe(deltaX -> {
-//            double w = deltaX / width;
-//            System.out.println("w=" + w);
-//            
-//            double newMaxX = startMaxX + (startMaxX - minXProperty.get()) * w;
-//            System.out.println("newMax=" + newMaxX);
-//            maxXProperty.set(newMaxX);
-//        });
-        
         adjacentPanelAdded.subscribe(this::onAdjacentAdded);
     }
     

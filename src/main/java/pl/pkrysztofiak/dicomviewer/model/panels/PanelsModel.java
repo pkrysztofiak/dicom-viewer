@@ -1,12 +1,17 @@
 package pl.pkrysztofiak.dicomviewer.model.panels;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import io.reactivex.Observable;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 
 public class PanelsModel {
 
@@ -14,6 +19,12 @@ public class PanelsModel {
     private final ObservableList<PanelModel> unmodifiablePanles = FXCollections.unmodifiableObservableList(panels);
     private final Observable<PanelModel> panelAddedObservable = JavaFxObservable.additionsOf(panels);
 
+    private final Map<Point2D, ObservableList<PanelModel>> pointToPanels = new HashMap<>();
+    
+    private final Map<Double, ObservableList<PanelModel>> xToPanels = new HashMap<>();
+    private final Map<Double, ObservableList<PanelModel>> yToPanels = new HashMap<>();
+//    private final Map<Double, ObservableList<PanelModel>> minXToPanels = new HashMap<>();
+    
     public PanelsModel() {
         panelAddedObservable.subscribe(this::onPanelAdded);
     }
@@ -32,12 +43,9 @@ public class PanelsModel {
     
     private void onPanelAdded(PanelModel addedPanelModel) {
         addedPanelModel.setParent(this);
-
-//        System.out.println("addedPanel " + addedPanelModel);
-        panels.stream().forEach(System.out::println);
-        
         refresh(addedPanelModel);
         panels.stream().filter(panelModel -> !panelModel.equals(addedPanelModel)).forEach(this::refresh);
+        
     }
 
     private void refresh(PanelModel panelModelToRefresh) {
@@ -45,52 +53,54 @@ public class PanelsModel {
         
         for (PanelModel panelModel : panels) {
             if (!panelModel.equals(panelModelToRefresh)) {
-                
                 if (panelModelToRefresh.getMaxX() == panelModel.getMinX()) {
                     if (!(panelModelToRefresh.getMinY() > panelModel.getMaxY()) || !(panelModelToRefresh.getMaxY() < panelModel.getMinY())) {
-                        //TODO dopisać takeUntil na panelModel.removedObservable();
-//                        addedPanelModel.maxXObservable.subscribe(panelModel::setMinX);
-//                        panelModel.minXObservable.subscribe(addedPanelModel::setMaxX);
                         adjacentPanels.add(panelModel);
-//                        rightAdjacentPanels.add(panelModel);
                     }
                 }
                 
                 if (panelModelToRefresh.getMaxY() == panelModel.getMinY()) {
                     if (!(panelModelToRefresh.getMinX() > panelModel.getMaxX()) || !(panelModelToRefresh.getMaxX() < panelModel.getMinX())) {
-//                        addedPanelModel.maxYObservable.subscribe(panelModel::setMinY);
-//                        panelModel.minYObservable.subscribe(addedPanelModel::setMaxY);
                         adjacentPanels.add(panelModel);
-//                        bottomAdjacentPanels.add(panelModel);
                     }
                 }
 
                 if (panelModelToRefresh.getMinX() == panelModel.getMaxX()) {
                     if (!(panelModelToRefresh.getMinY() > panelModel.getMaxY()) || !(panelModelToRefresh.getMaxY() < panelModel.getMinY())) {
-//                        addedPanelModel.minXObservable.subscribe(panelModel::setMaxX);
-//                        panelModel.maxXObservable.subscribe(addedPanelModel::setMinX);
                         adjacentPanels.add(panelModel);
-//                        leftAdjacentPanels.add(panelModel);
                     }
                 }
                 
                 if (panelModelToRefresh.getMinY() == panelModel.getMaxY()) {
                     if (!(panelModelToRefresh.getMinX() > panelModel.getMaxX()) || !(panelModelToRefresh.getMaxX() < panelModel.getMinX())) {
-//                        addedPanelModel.minYObservable.subscribe(panelModel::setMaxY);
-//                        panelModel.maxYObservable.subscribe(addedPanelModel::setMinY);
                         adjacentPanels.add(panelModel);
-//                        topAdjacentPanels.add(panelModel);
                     }
                 }
             }
         }
 
         panelModelToRefresh.adjacentPanels.setAll(adjacentPanels);
+    }
+    
+    private void fillPoints() {
+        for (PanelModel panel : panels) {
+            Stream.of(panel.getMinX(), panel.getMaxX()).forEach(x -> {
+                if (!xToPanels.containsKey(x)) {
+                    xToPanels.put(x, FXCollections.observableArrayList(panel));
+                }
+                xToPanels.get(x).add(panel);
+            });
+
+            Stream.of(panel.getMinY(), panel.getMaxY()).forEach(y -> {
+                if (!yToPanels.containsKey(y)) {
+                    yToPanels.put(y, FXCollections.observableArrayList(panel));
+                }
+                yToPanels.get(y).add(panel);
+            });
+        }
         
-        
-//        panelModelToRefresh.topAdjacementPanels.setAll(topAdjacentPanels);
-//        panelModelToRefresh.rightAdjacementPanels.setAll(rightAdjacentPanels);
-//        panelModelToRefresh.bottomAdjacementPanels.setAll(bottomAdjacentPanels);
-//        panelModelToRefresh.leftAdjacementPanels.setAll(leftAdjacentPanels);
+        for (Entry<Double, ObservableList<PanelModel>> entry : xToPanels.entrySet()) {
+            
+        }
     }
 }
