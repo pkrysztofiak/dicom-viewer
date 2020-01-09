@@ -2,6 +2,7 @@ package pl.pkrysztofiak.dicomviewer.model.panels;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,6 +12,8 @@ import io.reactivex.Observable;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Point2D;
 
 public class PanelsModel {
@@ -24,6 +27,8 @@ public class PanelsModel {
     private final Map<Double, ObservableList<PanelModel>> xToPanels = new HashMap<>();
     private final Map<Double, ObservableList<PanelModel>> yToPanels = new HashMap<>();
 //    private final Map<Double, ObservableList<PanelModel>> minXToPanels = new HashMap<>();
+    
+    private final ObservableMap<Point2D, ObservableSet<PanelModel>> vertexToPanels = FXCollections.observableHashMap();
     
     public PanelsModel() {
         panelAddedObservable.subscribe(this::onPanelAdded);
@@ -86,21 +91,75 @@ public class PanelsModel {
         for (PanelModel panel : panels) {
             Stream.of(panel.getMinX(), panel.getMaxX()).forEach(x -> {
                 if (!xToPanels.containsKey(x)) {
-                    xToPanels.put(x, FXCollections.observableArrayList(panel));
+                    xToPanels.put(x, FXCollections.observableArrayList());
                 }
                 xToPanels.get(x).add(panel);
             });
 
             Stream.of(panel.getMinY(), panel.getMaxY()).forEach(y -> {
                 if (!yToPanels.containsKey(y)) {
-                    yToPanels.put(y, FXCollections.observableArrayList(panel));
+                    yToPanels.put(y, FXCollections.observableArrayList());
                 }
                 yToPanels.get(y).add(panel);
             });
         }
         
-        for (Entry<Double, ObservableList<PanelModel>> entry : xToPanels.entrySet()) {
-            
+        for (Entry<Double, ObservableList<PanelModel>> xEntry : xToPanels.entrySet()) {
+            Double x = xEntry.getKey();
+            ObservableList<PanelModel> xPanels = xEntry.getValue();
+            xPanels.forEach(currentPanel -> {
+                xPanels.stream().filter(currentPanel::equals).forEach(nextPanel -> {
+                    double currentMinY = currentPanel.getMinY();
+                    double currentMaxY = currentPanel.getMaxY();
+                    Stream.of(new Point2D(x, currentMinY), new Point2D(x, currentMaxY)).forEach(currentVertex -> {
+                        if (!vertexToPanels.containsKey(currentVertex)) {
+                            vertexToPanels.put(currentVertex, FXCollections.observableSet());
+                        }
+                        vertexToPanels.get(currentVertex).add(currentPanel);
+                    });
+                    
+                    Stream.of(nextPanel.getMinY(), nextPanel.getMaxY()).forEach(y -> {
+                        if (y > currentMinY && y < currentMaxY) {
+                            Point2D point = new Point2D(x, y);
+                            if (!vertexToPanels.containsKey(point)) {
+                                vertexToPanels.put(point, FXCollections.observableSet());
+                            }
+                            vertexToPanels.get(point).add(currentPanel);
+                        }
+                    });
+                });
+            });
         }
+        
+        //TODO dodać obsługe yToPanels
+
+        ObservableMap<Double, ObservableList<Point2D>> xToVertices = FXCollections.observableHashMap(); 
+        ObservableMap<Double, ObservableList<Point2D>> yToVertices = FXCollections.observableHashMap(); 
+        
+        vertexToPanels.entrySet().forEach(entry -> {
+            Point2D vertex = entry.getKey();
+            double vertexX = vertex.getX();
+            double vertexY = vertex.getY();
+            ObservableSet<PanelModel> vertexPanels = entry.getValue();
+
+            if (!xToVertices.containsKey(vertexX)) {
+                xToVertices.put(vertexX, FXCollections.observableArrayList());
+            }
+            xToVertices.get(vertexX).add(vertex);
+            
+            if (!yToVertices.containsKey(vertexY)) {
+                yToVertices.put(vertexY, FXCollections.observableArrayList());
+            }
+            yToVertices.get(vertexY).add(vertex);
+        });
+        
+        xToVertices.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Entry::getValue).flatMap(List::stream).reduce((current, next) -> {
+            ObservableSet<PanelModel> currentPanels = vertexToPanels.get(current);
+            ObservableSet<PanelModel> nextPanels = vertexToPanels.get(next);
+            
+            //TODO sprawdzić czy jakikolwiek panel ma takiego samego line jak wytworzony przy pomocy Line(Point(current.x, current.y), Point(next.x, next.y))
+
+            return next;
+        });
     }
 }

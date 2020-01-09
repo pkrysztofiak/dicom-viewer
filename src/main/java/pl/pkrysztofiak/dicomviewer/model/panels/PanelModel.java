@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 
 public abstract class PanelModel {
 
@@ -34,6 +35,8 @@ public abstract class PanelModel {
     public final Observable<Double> maxYObservable = JavaFxObservable.valuesOf(maxYProperty).map(Number::doubleValue);
 
     private final ObjectProperty<PanelsModel> parentProperty = new SimpleObjectProperty<>();
+    
+    public final ObservableList<Point2D> vertices = FXCollections.observableArrayList();
 
     public PanelModel() {
         adjacentPanelAdded.subscribe(this::onAdjacentAdded);
