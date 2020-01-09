@@ -157,7 +157,9 @@ public class PanelsModel {
             ObservableSet<PanelModel> currentPanels = vertexToPanels.get(current);
             ObservableSet<PanelModel> nextPanels = vertexToPanels.get(next);
             
-            //TODO sprawdzić czy jakikolwiek panel ma takiego samego line jak wytworzony przy pomocy Line(Point(current.x, current.y), Point(next.x, next.y))
+            //TODO
+            //sprawdzić czy jakikolwiek panel ma takiego samego line jak wytworzony przy pomocy Line(Point(current.x, current.y), Point(next.x, next.y))
+            //jezeli to addBorderPane;  
 
             return next;
         });
