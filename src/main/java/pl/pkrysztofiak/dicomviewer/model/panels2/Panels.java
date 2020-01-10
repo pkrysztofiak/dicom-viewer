@@ -20,7 +20,8 @@ public class Panels {
     private final ObservableMap<Panel, Border> panelToBottomBorder = FXCollections.observableHashMap();
     private final ObservableMap<Panel, Border> panelToLeftBorder = FXCollections.observableHashMap();
     
-    private final VerticalBorders verticalBorders = new VerticalBorders();
+    public final VerticalBorders verticalBorders = new VerticalBorders();
+    public final Observable<VerticalBorder> verticalBorderAddedObservable = verticalBorders.borderAddedObservable; 
     
     public Panels() {
         panelAddedObservable.subscribe(this::onPanelAdded);
