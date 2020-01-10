@@ -30,6 +30,8 @@ public class PanelsModel {
     
     private final ObservableMap<Point2D, ObservableSet<PanelModel>> vertexToPanels = FXCollections.observableHashMap();
     
+    private final Map<PanelModel, ObservableList<PanelModel>> panelMaxXToPanels = FXCollections.observableHashMap();
+    
     public PanelsModel() {
         panelAddedObservable.subscribe(this::onPanelAdded);
     }
@@ -50,7 +52,6 @@ public class PanelsModel {
         addedPanelModel.setParent(this);
         refresh(addedPanelModel);
         panels.stream().filter(panelModel -> !panelModel.equals(addedPanelModel)).forEach(this::refresh);
-        
     }
 
     private void refresh(PanelModel panelModelToRefresh) {
