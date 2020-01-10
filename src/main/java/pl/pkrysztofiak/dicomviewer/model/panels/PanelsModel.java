@@ -1,5 +1,6 @@
 package pl.pkrysztofiak.dicomviewer.model.panels;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,8 @@ public class PanelsModel {
     private final Map<Double, ObservableList<PanelModel>> xToPanels = new HashMap<>();
     private final Map<Double, ObservableList<PanelModel>> yToPanels = new HashMap<>();
 //    private final Map<Double, ObservableList<PanelModel>> minXToPanels = new HashMap<>();
+    
+    private final ObservableList<BorderModel> borders = FXCollections.observableArrayList();
     
     private final ObservableMap<Point2D, ObservableSet<PanelModel>> vertexToPanels = FXCollections.observableHashMap();
     
@@ -154,15 +157,29 @@ public class PanelsModel {
             yToVertices.get(vertexY).add(vertex);
         });
         
-        xToVertices.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Entry::getValue).flatMap(List::stream).reduce((current, next) -> {
-            ObservableSet<PanelModel> currentPanels = vertexToPanels.get(current);
-            ObservableSet<PanelModel> nextPanels = vertexToPanels.get(next);
-            
-            //TODO
-            //sprawdzić czy jakikolwiek panel ma takiego samego line jak wytworzony przy pomocy Line(Point(current.x, current.y), Point(next.x, next.y))
-            //jezeli to addBorderPane;  
+        for (Entry<Double, ObservableList<Point2D>> entry : xToVertices.entrySet()) {
+            Double x = entry.getKey();
+            List<Point2D> list = new ArrayList<>(entry.getValue());
+            list.sort((point1, point2) -> Double.compare(point1.getY(), point1.getY()));
+            for (int i = 0, j = 1; j < list.size(); i++, j++) {
+                Point2D currentPoint = list.get(i);
+                Point2D nextPoint = list.get(j);
+                
+                Set<PanelModel> set = new HashSet<>(vertexToPanels.get(currentPoint));
+                set.retainAll(vertexToPanels.get(nextPoint));
+                
+                List<PanelModel> borderPanels = new ArrayList<>();
+                
+                for (PanelModel panel : set) {
+                    if (panel.getMinX() == x || panel.getMaxX() == x) {
+                        borderPanels.add(panel);
+                    }
+                }
 
-            return next;
-        });
+                if (!borderPanels.isEmpty()) {
+                    borders.add(new BorderModel(currentPoint, nextPoint, borderPanels));
+                }
+            }
+        }
     }
 }
